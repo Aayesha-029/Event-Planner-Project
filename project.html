@@ -1,0 +1,72 @@
+
+
+<html lang="en">tr5
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Planner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- For icons -->
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="site-header">
+        <div class="header-content">
+            <h1 class="head">EVENT  PLANNER</h1>
+           <div class= "header-action">
+             <button id="calendar-btn" class="icon-btn-cal"><i class="fas fa-calendar-alt"></i>   Check Availability</button>
+             <button id="cart-btn" class="icon-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+            <a href="booking.html"> <button id="bookings-btn" class="bookings-btn"><i class="fa-solid fa-calendar-check"></i>   My Bookings</button></a>
+             <!-- Admin Button (Hidden by default) -->
+             <button id="admin-btn" class="admin-btn" style="display: none;"><i class="fa-solid fa-user-shield"></i>   Admin Check</button>
+           
+           </div>
+        </div>
+        
+
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h3 id="slogan">Celebrates The Most Elegant Occasion Of Life With Us</h3>
+            <h2 id="event-name">Wedding Celebration</h2>
+            <p id="event-info">  A grand and graceful Wedding experiance with perfection.</p>
+            <button class="lux-login-btn" onclick="login()"><i class="fa-solid fa-right-to-bracket"></i>  log in</button>
+        </div>
+
+</div>
+        <div id="cart-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Your Cart</h3>
+        <div id="cart-items"></div>
+        <p>Total: ₹<span id="cart-total">0</span></p>
+        <button id="checkout-btn" class="add-to-cart-btn">Checkout</button>
+    </div>
+</div>
+
+
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <div class="tabs">
+              <button class="tab active" data-tab="home" ><i class="fa-solid fa-house"></i>   Home</button>
+                <a href="event.html"><button class="tab" data-tab="event"><i class="fa-solid fa-champagne-glasses"></i>  Event </button></a>
+                <a href="service.html"><button class="tab" data-tab="service"><i class="fa-solid fa-bell-concierge"></i>  Service </button></a>
+                <a href="cetaring.html"><button class="tab" data-tab="catering"><i class="fa-solid fa-utensils"></i>   Catering </button></a>
+                <a href="decoration.html"><button class="tab" data-tab="decoration"><i class="fa-sharp fa-solid fa-wand-magic-sparkles"></i> Decoration </button></a>
+                <a href="contact.html"><button class="tab" data-tab="contact us"><i class="fas fa-phone-alt"></i> Contat-us </button></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    
+</script>
+</body>
+</html>
