@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Event Planner - Services</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px; /* Reduced padding for tighter layout */
+            background-color: #181818; /* Fallback background color */
+            color: #333; /* Dark grey text */
+            /* New: Background photo */
+            background-image: url('img3.avif'); /* Replace with your image path, e.g., 'img3.avif' */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow: hidden; /* Prevents scroll bar by clipping overflow */
+        }
+        
+        nav a:hover {
+            color: #fff; /* White on hover */
+        }
+        .services-container {
+            max-width: 1200px;
+            margin: 10px auto; /* Reduced margin from 20px to 10px to minimize space and scroll */
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white for readability over background image */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            font-family: Georgia, 'Times New Roman', Times, serif;
+
+            
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            background-color: #333; /* Dark grey */
+            color: #d4c04a; /* Gold */
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        .tab-button.active {
+            background-color: #c0ac3a; /* Gold active */
+            color: #000; /* Black text */
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .service {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 5px solid #0f0f0f; /* Gold accent */
+            background-color: #525151; /* Light grey */
+background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212,175,55,0.25) 50%,
+    transparent 100%
+  );
+
+
+        }
+        .service h3 {
+            color: #080808; /* Black */
+            margin-top: 0;
+            
+        }
+        .service p {
+            color: #141414; /* Grey */
+            background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212,175,55,0.25) 50%,
+    transparent 100%
+  );
+        }
+        /* Footer styles (unchanged, but ensuring it fits) */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 12px 40px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 1%;
+        }
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tabs {
+            display: flex;
+            gap: 40px;
+        }
+        .tab {
+            background: transparent;
+            border: 1px solid #555;
+            border-radius: 20px;
+            color: white;
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab:hover {
+            background-color: #555;
+        }
+        .tab.active {
+            background-color: #847c0ef3; /* Matches your home page */
+            border-color: #aaa;
+        }
+        .tab i {
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Brands'; /* Force Font Awesome font */
+    font-weight: 900; /* For solid icons */
+}
+
+
+    </style>
+</head>
+<body>
+     <i class="fa-solid fa-house"></i>
+    <div class="services-container">
+        <h2>Our Services</h2>
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="openTab('weddings')">Weddings</button>
+            <button class="tab-button" onclick="openTab('corporate')">Corporate Events</button>
+            <button class="tab-button" onclick="openTab('parties')">Parties</button>
+        </div>
+        <div id="weddings" class="tab-content active">
+            <div class="service">
+                <h3>Wedding Planning</h3>
+                <p>We handle every detail of your dream wedding, from venue selection to catering and decor, ensuring a magical day.</p>
+                <p>From Planning to Perfection<br>
+                   Your Event, Our Expertise<br>
+                   Because Every Event Deserves the Best<br>
+                   Making Celebrations Seamless<br>
+                </p>
+                <p>
+                    Exceptional Services for Unforgettable Events<br>
+                    Where Every Detail Becomes a Delight<br>
+                    Turning Your Vision into a Perfect Event<br>
+                    Reliable Services. Remarkable Experiences.<br>
+                    Crafting Moments, Delivering Excellence<br>
+                </p>
+            </div>
+            <div class="service">
+                <h3>Day-of Coordination</h3>
+                <p>Our team manages the timeline, vendors, and logistics on your big day for a stress-free experience.</p>
+            </div>
+        </div>
+        <div id="corporate" class="tab-content">
+            <div class="service">
+                <h3>Conference Organization</h3>
+                <p>Plan and execute professional conferences with AV setup, catering, and networking opportunities.</p>
+               <p> “Professional Events for Professional Success”<br>
+                   Where Business Meets Excellence<br>
+                   Corporate Events, Perfectly Planned<br>
+               </p>
+               <p>
+                   Business Events, Brilliantly Executed<br>
+                   Where Business Meets Celebration<br>
+                   Events That Reflect Your Brand<br>
+               </p>
+            </div>
+            <div class="service">
+                <h3>Team Building Events</h3>
+                <p>Engage your team with fun, interactive activities tailored to your company's needs.</p>
+            </div>
+        </div>
+        <div id="parties" class="tab-content">
+            <div class="service">
+                <h3>Birthday Parties</h3>
+                <p>Create unforgettable birthday celebrations with themes, games, and custom decorations.</p>
+                <p>“Let's Turn Your Party into a Celebration!”<br>
+                   Because Every Party Deserves to Shine<br>
+                   Fun, Food & Fantastic Moments<br>
+                   Bringing Life to Every Party<br>
+                   Celebrate Loud. Celebrate Right.<br>
+                </p>
+                <p>
+                   Making Every Party Unforgettable<br>
+                   Big Smiles, Bright Lights, Best Parties<br>
+                   Your Party, Perfectly Planned<br>
+                   Celebrate the Way You Dream<br>
+                </p>
+            </div>
+            <div class="service">
+                <h3>Anniversary Celebrations</h3>
+                <p>Mark special milestones with elegant setups, entertainment, and personalized touches.</p>
+            </div>
+        </div>
+    </div>
+    
+   
+    <head>
+    <!-- ... other head content ... -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Updated link -->
+</head>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <div class="tabs">
+                <a href="project.html"></a><button class="tab" data-tab="home" ><i class="fa-solid fa-house"></i>   Home</button>
+                <a href="event.html"><button class="tab" data-tab="event"><i class="fa-solid fa-champagne-glasses"></i>  Event </button></a>
+                <a href="service.html"><button class="tab active" data-tab="service"><i class="fa-solid fa-bell-concierge"></i>  Service </button></a>
+                <a href="cetaring.html"><button class="tab" data-tab="catering"><i class="fa-solid fa-utensils"></i>   Catering </button></a>
+                <a href="decoration.html"><button class="tab" data-tab="decoration"><i class="fa-sharp fa-solid fa-wand-magic-sparkles"></i> Decoration </button></a>
+                <a href="contact.html"><button class="tab" data-tab="contact us"><i class="fas fa-phone-alt"></i> Contat-us </button></a>
+
+            </div>
+
+        </div>
+    </footer>
+
+    <script>
+        function openTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            // Show the selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to the clicked button
+            event.target.classList.add('active');
+        }
+
+        // Footer tab handling
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                // Add logic to load service-specific content or navigate
+                const tabName = tab.getAttribute('data-tab');
+                if (tabName === 'home') {
+                    window.location.href = 'project.html'; // Or load content dynamically
+                }
+                // Repeat for other tabs
+            });
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                // Add logic to load service-specific content or navigate
+                const tabName = tab.getAttribute('data-tab');
+                if (tabName === 'home') {
+                    window.location.href = 'project.html'; // Or load content dynamically
+                }
+                // Repeat for other tabs
+            });
+        });
+        
+
+
+       
+        
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

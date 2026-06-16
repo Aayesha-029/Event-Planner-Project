@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Planner - Events</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            
+            margin: 0;
+            padding: 0;
+            padding-bottom: 60px;
+            background-color: #181818;
+            color: #000;
+            background-image: url('img3.avif');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .site-header {
+            background-color: #333;
+            color: #fff;
+            padding: 5px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .head {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.6rem, 3.5vw, 3.4rem);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            line-height: 0.8;
+            white-space: nowrap;
+            background: linear-gradient(180deg, #f7e7b4, #fff, #f3dd9e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.35), 0 6px 25px rgba(0, 0, 0, 0.6);
+            animation: goldGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes goldGlow {
+            0% { filter: drop-shadow(0 0 16px rgba(253, 209, 67, 0.849)); }
+            100% { filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.7)); }
+        }
+
+        .header-action {
+            display: flex;
+            align-items: center;
+            gap: 29px;
+        }
+
+        .icon-btn-cal {
+            background: transparent;
+            border: 1px solid #666;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 22px;
+            background-color: #575656;
+            transition: 0.2s ease-out;
+        }
+
+        .bookings-btn {
+            background: transparent;
+            border: 1px solid #666;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 15px;
+            background-color: #575656;
+            transition: 0.1s ease-in-out;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: 1px solid #666;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 15px;
+            background-color: #575656;
+            transition: 0.2s ease;
+        }
+
+        .header-action button:hover {
+            background-color: #555;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 10px rgba(239, 243, 37, 0.813);
+        }
+
+        /* Events Container */
+        .events-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border:1px solid rgba(255,255,2550.3);
+            box-shadow:0.8px 32px rgba(0,0,0,0.3);
+           color:white;
+            border-radius: 15px;
+            max-height: 75vh;
+            overflow-y: auto;
+            text-align: center;
+        }
+
+        /* Custom Scrollbar */
+        .events-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .events-container::-webkit-scrollbar-track {
+            background: #222;
+            border-radius: 10px;
+        }
+
+        .events-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #d4af37, #847c0e);
+            border-radius: 10px;
+        }
+
+        .events-container::-webkit-scrollbar-thumb:hover {
+            background: #ffd700;
+        }
+
+        h2 {
+            color: #d4af37;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dropdown */
+        .event-dropdown {
+            margin-bottom: 30px;
+        }
+
+        .event-dropdown select {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            font-size: 1.2em;
+            padding: 12px 20px;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            background-color: #333;
+            color: #d4af37;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .event-dropdown select:hover {
+            background-color: #555;
+            border-color: #b8962e;
+        }
+
+        .event-dropdown select:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        /* Event Details */
+        .event-details {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            text-align: justify;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-details h3 {
+            color: #d4af37;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .event-details p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        /* Price Display */
+        .price-display {
+            color: #d4af37;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Add to Cart Button */
+        .add-to-cart-btn {
+            background: transparent;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #d4af37;
+            color: white;
+        }
+
+        /* Photo Gallery */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .photo-gallery img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .photo-gallery img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 12px 40px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 40px;
+        }
+
+        .tab {
+            background: transparent;
+            border: 1px solid #555;
+            border-radius: 20px;
+            color: white;
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background-color: #555;
+        }
+
+        .tab.active {
+            background-color: #847c0ef3;
+            border-color: #aaa;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            .tabs {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .event-dropdown select {
+                font-size: 1em;
+            }
+            .photo-gallery {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-content">
+            <h1 class="head">EVENT PLANNER</h1>
+            <div class="header-action">
+                <!--<button id="calendar-btn" class="icon-btn-cal"><i class="fas fa-calendar-alt"></i></button>-->
+               <!-- <button id="cart-btn" class="icon-btn"><i class="fas fa-shopping-cart"></i> Add to Cart</button>--> <!-- No count badge here -->
+                <!--<a href="booking.html"><button id="bookings-btn" class="bookings-btn"><i class="fa-solid fa-calendar-check"></i> My Bookings</button></a>-->
+            
+            </div>
+        </div>
+    </header>
+
+    <!-- Events Container -->
+    <div class="events-container">
+        <h2>Select Your Event</h2>
+        <div class="event-dropdown">
+            <select id="event-select" onchange="showEventDetails()">
+                <option value="">Select an Event</option>
+                <option value="wedding">Wedding</option>
+                <option value="mehndi">Mehndi</option>
+                <option value="haldi">Haldi</option>
+                <option value="reception">Reception</option>
+                <option value="corporate">Corporate Party</option>
+                <option value="baby-shower">Baby Shower</option>
+                <option value="birthday">Birthday Party</option>
+                <option value="anniversary">Anniversary Celebration</option>
+                <option value="other">Other Ceremonies</option>
+            </select>
+        </div>
+
+        <!-- Event Details -->
+        <div id="wedding" class="event-details">
+            <h2>Wedding</h2>
+            <p><h3>Celebrate the most elegant occasion of life with our exquisite wedding planning services.</h3></p>
+            <div class="price-display" data-price="5000">Price: ₹25000</div>
+            <button class="add-to-cart-btn" data-event="Wedding" data-price="5000">Add to Cart</button>
+            <div class="photo-gallery">
+                <img src="images/wd.1.jpg" alt="Wedding 1">
+                <img src="images/wd2.jpg" alt="Wedding 2">
+                <img src="images/wd4.jpg" alt="Wedding 3">
+                <img src="images/wd3.jpg" alt="Wedding 4">
+                <img src="images/wd5.jpg" alt="Wedding 5">
+                <img src="images/wd6.jpg" alt="Wedding 6">
+            </div>
+        </div>
+
+        <div id="mehndi" class="event-details">
+            <h2>Mehndi Ceremony</h2>
+            <p><h3>Elegant mehndi setups with ethnic decor, music and traditional vibes.</h3></p>
+            <div class="price-display" data-price="2000">Price: ₹10000</div>
+            <button class="add-to-cart-btn" data-event="Mehndi Ceremony" data-price="2000">Add to Cart</button>
+            <div class="photo-gallery">
+                <img src="images/md1.jpg" alt="Mehndi 1">
+                <img src="images/md2.jpg" alt="Mehndi 2">
+                <img src="images/md3.jpg" alt="Mehndi 3">
+            </div>
+        </div>
+
+        <div id="haldi" class="event-details">
+            <h2>Haldi Ceremony</h2>
+            <p><h3>A vibrant and joyful haldi ceremony filled with colors, traditions and happiness.</h3></p>
+            <div class="price-display" data-price="1800">Price: ₹18000</div>
+            <button class="add-to-cart-btn" data-event="Haldi Ceremony" data-price="1800">Add to Cart</button>
+            <div class="photo-gallery">
+                <img src="images/hd1.jpg" alt="Haldi 1">
+                <img src="images/hd2.jpg" alt="Haldi 2">
+                <img src="images/hd3.jpg" alt="Haldi 3">
+            </div>
+        </div>
+
+        <div id="reception" class="event-details">
+            <h2>Reception Party</h2>
+            <p><h3>A grand reception setup with luxurious decor and flawless arrangements.</h3></p>
+            <div class="price-display" data-price="3500">Price: ₹15000</div>
+            <button class="add-to-cart-btn" data-event="Reception Party" data-price="3500">Add to Cart</button>
+            <div class="photo-gallery">
+                <img src="images/rp1.jpg" alt="Reception 1">
+                <img src="images/rp2.jpg" alt="Reception 2">
+                <img src="images/rp3.jpg" alt="Reception 3">
+            </div>
+        </div>
+
+        <div id="corporate" class="event-details">
+            <h2>Corporate Event</h2>
+            <p><h3>Professional corporate event planning including meetings, conferences and product launches.</h3></p>
+            <div class="price-display" data-price="3000">Price: ₹30000</div>
+            <button class="add-to-cart-btn" data-event="Corporate Event" data-price="3000">Add to Cart</button>
+            <div class="photo-gallery">
+                <img src="images/cp1.jpg" alt="Corporate 1">
+                <img src="images/cp2.jpg" alt="Corporate 2">
+                <img src="images/cp3.jpg" alt="Corporate 3">
+            </div>
+        </div>
+
+        <div id="baby-shower" class="event-details">
+            <h2>Baby Shower</h2>
+            <p><h3>Celebrate the joy of welcoming a new life.</h3></p>
+            <div class="price-display" data-price="2200">Price: ₹7000</div>
+            <button class="add-to-cart-btn" data-event="Baby Shower" data-price="2200">Add to Cart</button>
+            <div class="photo-gallery">
+                <img src="images/bby.1.jpg" alt="Baby Shower 1">
+                <img src="images/bby.2.jpg" alt="Baby Shower 2">
+                <img src="images/bby.3.jpg" alt="Baby Shower 3">
+            </div>
+        </div>
+
+               <div id="birthday" class="event-details">
+            <h2>Birthday Party</h2>
+            <p><h3>Make every birthday shine...</h3></p>
+            <div class="price-display" data-price="800">Price: ₹8000</div>
+            <button class="add-to-cart-btn" data-event="Birthday Party" data-price="800">Add to Cart</button>
+            <div class="photo-gallery">
+                <img src="images/bdd1.jpg" alt="Birthday 1">
+                <img src="images/bdd2.jpg" alt="Birthday 2">
+                <img src="images/bdd3.jpg" alt="Birthday 3">
+                <img src="images/bdd4.jpg" alt="Birthday 4">
+                <img src="images/bdd5.jpg" alt="Birthday 5">
+                <img src="images/bdd6.jpg" alt="Birthday 6">
+            </div>
+        </div>
+
+        <div id="anniversary" class="event-details">
+            <h2>Anniversary Celebration</h2>
+            <p><h3>Romantic and elegant anniversary celebrations curated just for you.</h3></p>
+            <div class="price-display" data-price="2000">Price: ₹18000</div>
+            <button class="add-to-cart-btn" data-event="Anniversary Celebration" data-price="2000">Add to Cart</button>
+            <div class="photo-gallery">
+                <img src="images/an1.jpg" alt="Anniversary 1">
+                <img src="images/an2.jpg" alt="Anniversary 2">
+                <img src="images/an3.jpg" alt="Anniversary 3">
+            </div>
+        </div>
+
+        <div id="other" class="event-details">
+            <h2>Other Ceremonies</h2>
+            <p><h3>Custom planning for engagements, retirements, or any special occasion. Tailored to your needs.</h3></p>
+            <p><h3>Contact us for personalized quotes and services.</h3></p>
+            <div class="price-display" data-price="6500">Price: ₹7500</div>
+            <button class="add-to-cart-btn" data-event="Other Ceremonies" data-price="6500">Add to Cart</button>
+            <div class="photo-gallery">
+                <img src="images/oe1.jpg" alt="Other 1">
+                <img src="images/oe2.jpg" alt="Other 2">
+                <img src="images/oe3.jpg" alt="Other 3">
+                <img src="images/oe4.jpg" alt="Other 4">
+                <img src="images/oe5.jpg" alt="Other 5">
+                <img src="images/oe6.jpg" alt="Other 6">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Your Cart</h3>
+            <ul id="cart-items"></ul>
+            <p>Total: ₹<span id="cart-total">0</span></p>
+            <button id="checkout-btn" class="add-to-cart-btn">Checkout</button>
+        </div>
+    </div>
+
+    <div id="calendar-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Check Availability</h3>
+            <label for="date">Date:</label>
+            <input type="date" id="date">
+            <label for="time">Time:</label>
+            <input type="time" id="time">
+            <button>Check</button>
+        </div>
+    </div>
+
+    <div id="bookings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>My Bookings</h3>
+            <ul>
+                <li><strong>Type:</strong> Wedding | <strong>Name:</strong> John's Wedding | <strong>Budget:</strong> ₹5000 | <strong>Date/Time:</strong> 2023-10-15 18:00</li>
+                <li><strong>Type:</strong> Corporate | <strong>Name:</strong> Team Meeting | <strong>Budget:</strong> ₹2000 | <strong>Date/Time:</strong> 2023-11-20 10:00</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <div class="tabs">
+                <a href="project.html"><button class="tab" data-tab="home"><i class="fa-solid fa-house"></i> Home</button></a>
+                <a href="event.html"><button class="tab active" data-tab="event"><i class="fa-solid fa-champagne-glasses"></i> Event</button></a>
+                <a href="service.html"><button class="tab" data-tab="service"><i class="fa-solid fa-bell-concierge"></i> Service</button></a>
+                <a href="cetaring.html"><button class="tab" data-tab="catering"><i class="fa-solid fa-utensils"></i> Catering</button></a>
+                <a href="decoration.html"><button class="tab" data-tab="decoration"><i class="fa-sharp fa-solid fa-wand-magic-sparkles"></i> Decoration</button></a>
+                <a href="contact.html"><button class="tab" data-tab="contact us"><i class="fas fa-phone-alt"></i> Contat-us </button></a>
+            </div>
+        </div>
+    </footer>
+
+   <script>
+    // Function to show event details based on dropdown selection
+    function showEventDetails() {
+        const select = document.getElementById('event-select');
+        const selectedValue = select.value;
+        
+        // Hide all event details
+        const details = document.querySelectorAll('.event-details');
+        details.forEach(detail => detail.style.display = 'none');
+        
+        // Show the selected event details
+        if (selectedValue) {
+            document.getElementById(selectedValue).style.display = 'block';
+        }
+    }
+
+    // Add to Cart functionality (saves to shared localStorage with visual feedback on button)
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const eventName = button.getAttribute('data-event');
+            const priceAttr = button.getAttribute('data-price');
+            const price = Number(priceAttr);
+            
+            // Validate price
+            if (isNaN(price) || price <= 0) {
+                console.error('Invalid price for item:', eventName);
+                return;
+            }
+            
+            let cart = JSON.parse(localStorage.getItem('eventCart')) || [];
+            
+            // Check if item already exists
+            const existing = cart.find(item => item.name === eventName && item.category === 'event');
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ name: eventName, price: price, quantity: 1, category: 'event' });
+            }
+            
+            // Save to localStorage (shared across pages)
+            localStorage.setItem('eventCart', JSON.stringify(cart));
+            
+            // Visual feedback: Change button text temporarily
+            const originalText = button.textContent;
+            button.textContent = 'Added!';
+            button.style.backgroundColor = '#d4af37'; // Highlight in gold
+            button.style.color = 'white';
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = 'transparent';
+                button.style.color = '#d4af37';
+            }, 2000); // Revert after 2 seconds
+        });
+    });
+
+    // Modal handling for header buttons
+    document.getElementById('calendar-btn').addEventListener('click', () => {
+        document.getElementById('calendar-modal').style.display = 'block';
+    });
+
+    document.getElementById('bookings-btn').addEventListener('click', () => {
+        document.getElementById('bookings-modal').style.display = 'block';
+    });
+
+    document.getElementById('cart-btn').addEventListener('click', () => {
+        updateCartModal();
+        document.getElementById('cart-modal').style.display = 'block';
+    });
+
+    // Close modals
+    document.querySelectorAll('.close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', (e) => {
+            e.target.closest('.modal').style.display = 'none';
+        });
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+            e.target.style.display = 'none';
+        }
+    });
+
+    // Footer tab handling
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+    });
+});
+
+    // Unified Cart Modal Functions (for viewing cart on this page if needed)
+    function updateCartModal() {
+        const cartList = document.getElementById('cart-items');
+        const totalSpan = document.getElementById('cart-total');
+        let cart = JSON.parse(localStorage.getItem('eventCart')) || [];
+        cartList.innerHTML = '';
+        let total = 0;
+        cart.forEach((item, index) => {
+            total += item.price * item.quantity;
+            const li = document.createElement('li');
+            li.innerHTML = `
+                ${item.name} (${item.category}) - ₹${item.price} x ${item.quantity} = ₹${item.price * item.quantity}
+                <button onclick="removeFromCart(${index})" 
+                    style="margin-left:10px; background:#c0392b; color:white; border:none; border-radius:5px; cursor:pointer;">
+                    Remove
+                </button>
+            `;
+            cartList.appendChild(li);
+        });
+        totalSpan.textContent = total;
+    }
+
+    function removeFromCart(index) {
+        let cart = JSON.parse(localStorage.getItem('eventCart')) || [];
+        cart.splice(index, 1);
+        localStorage.setItem('eventCart', JSON.stringify(cart));
+        updateCartModal();
+    }
+
+    // Checkout
+    document.getElementById('checkout-btn').addEventListener('click', () => {
+        let cart = JSON.parse(localStorage.getItem('eventCart')) || [];
+        if (cart.length === 0) {
+            alert("Your cart is empty!");
+            return;
+        }
+        alert("Booking successful! Thank you for choosing Event Planner!");
+        localStorage.removeItem('eventCart');
+        updateCartModal();
+        document.getElementById('cart-modal').style.display = 'none';
+    });
+    
+    function addToCart(item, button) {
+    let cart = JSON.parse(localStorage.getItem('eventCart')) || [];
+    cart.push({ name: item.name, price: item.price, quantity: 1, category: 'event', img: item.img });
+    localStorage.setItem('eventCart', JSON.stringify(cart));
+    // Visual feedback: Change button text temporarily
+    const originalText = button.textContent;
+    button.textContent = 'Added!';
+    button.style.backgroundColor = '#d4af37';
+    button.style.color = 'white';
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = '#ffd700';
+        button.style.color = '#333';
+    }, 2000);
+}
+    
+</script>
+</body>
+</html>

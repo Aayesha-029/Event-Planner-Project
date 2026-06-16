@@ -1,0 +1,97 @@
+/* RESET */
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* BODY */
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  color:white;
+}
+
+/* BACKGROUND IMAGE + FADE */
+.background {
+position: fixed;
+inset:0;
+/*background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95));*/
+background-color: rgba(0, 0, 0, 0.6);
+background-image: url('img3.avif');  
+opacity:1;
+background-size: cover;
+background-position: center;
+z-index: -1;
+
+
+}
+
+
+
+/* FORM CONTAINER — SOLID DARK */
+.signup-container {
+    background: rgba(30, 30, 30, 0.75); /* controlled transparency */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(10px);
+  width: 380px;
+  padding: 40px;
+  background: #1e1e1e;   
+  border-radius: 14px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+  text-align: center;
+  color: white;
+  
+}
+
+/* TEXT */
+.signup-container h2 {
+  color: #d4af37;
+  margin-bottom: 6px;
+}
+
+.signup-container p {
+  color: #aaa;
+  font-size: 14px;
+  margin-bottom: 22px;
+}
+
+/* INPUTS */
+.signup-container input {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: 1px solid #e1d63d;
+  background: #2b2b2b;
+  color: white;
+}
+
+.signup-container input::placeholder {
+  color: #999;
+}
+
+/* BUTTON */
+.btn-gold {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  background: linear-gradient(135deg, #d4af37, #b8962e);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #1c1c1c;
+}
+
+/* LINK */
+.signup-container a {
+  display: block;
+  margin-top: 16px;
+  color: #d4af37;
+  text-decoration: none;
+  font-size: 13px;
+}

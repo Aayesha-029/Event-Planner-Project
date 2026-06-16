@@ -1,0 +1,44 @@
+<!---<form id="adminSignup">
+  <input type="email" id="adminEmail" placeholder="Admin Email" required>
+  <input type="password" id="adminPassword" placeholder="Password" required>
+  <button class="btn-gold">Create Admin</button>
+</form>--->
+<html>
+    <head>
+         <link rel="stylesheet" href="signup.css">
+    </head>
+    <body>
+        <div class="background"></div>
+<div class="signup-container">
+  <h2> Sign-Up</h2>
+  <p>Create your user account</p>
+
+  <form id="signupForm">
+    <input type="email" id="email" placeholder=" Email" required>
+    <span id="emailError" ></span>
+    <input type="password" id="password" placeholder="Password" required>
+    <span id="passwordError"></span>
+
+    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+    <span id="confirmPasswordError"></span>
+    <button class="btn-gold">Create Account</button>
+  </form>
+
+  <a href="login.html">Back to Login</a>
+</div>
+<script src="signup.js"></script>
+  <!--document.getElementById("adminSignup").onsubmit = function(e){
+    e.preventDefault();
+
+    const admin = {
+      email: adminEmail.value,
+      password: adminPassword.value
+    };
+
+    localStorage.setItem("admin", JSON.stringify(admin));
+    alert(" account created!");
+    window.location.href = "login.html";
+  }*/
+--->
+</body>
+</html>

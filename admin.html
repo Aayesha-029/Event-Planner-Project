@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Event Planner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* Header */
+        .admin-header {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            padding: 20px 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-bottom: 2px solid #c9a86c;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-content h1 {
+            font-family: 'Cinzel', serif;
+            color: #c9a86c;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .home-btn, .logout-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .home-btn {
+            background: linear-gradient(135deg, #c9a86c, #b89650);
+            color: #1a1a1a;
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: #ff6b6b;
+            border: 2px solid #ff6b6b;
+        }
+
+        .home-btn:hover, .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(201, 168, 108, 0.4);
+        }
+
+        /* Main Container */
+        .admin-container {
+            max-width: 1600px;
+            margin: 40px auto;
+            padding: 0 30px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid #c9a86c;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            color: #c9a86c;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #c9a86c;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        /* Tab Navigation */
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #c9a86c;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #aaa;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border-radius: 30px 30px 0 0;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #c9a86c, #b89650);
+            color: #1a1a1a;
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: #c9a86c;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid #c9a86c;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Tables - Fixed column widths */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px; /* Prevents wrapping by forcing table to be wider */
+        }
+
+        th {
+            background: #c9a86c;
+            color: #1a1a1a;
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 15px 10px;
+            border-bottom: 1px solid #c9a86c40;
+            color: #fff;
+            white-space: nowrap; /* Prevents text wrapping */
+        }
+
+        /* Specific column widths */
+        th:nth-child(1), td:nth-child(1) { min-width: 150px; } /* Booking ID */
+        th:nth-child(2), td:nth-child(2) { min-width: 120px; } /* Customer */
+        th:nth-child(3), td:nth-child(3) { min-width: 110px; } /* Event Date */
+        th:nth-child(4), td:nth-child(4) { min-width: 130px; } /* Event Time */
+        th:nth-child(5), td:nth-child(5) { min-width: 120px; } /* Event Type */
+        th:nth-child(6), td:nth-child(6) { min-width: 80px; }  /* Items */
+        th:nth-child(7), td:nth-child(7) { min-width: 100px; } /* Total */
+        th:nth-child(8), td:nth-child(8) { min-width: 120px; } /* Status */
+        th:nth-child(9), td:nth-child(9) { min-width: 280px; } /* Actions */
+
+        tr:hover {
+            background: rgba(201, 168, 108, 0.1);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .status-pending {
+            background: #FFC107;
+            color: #1a1a1a;
+        }
+
+        .status-approved {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-rejected {
+            background: #f44336;
+            color: white;
+        }
+
+        /* Action Buttons - Now in one line */
+        .action-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: nowrap; /* Prevents wrapping */
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .view-btn {
+            background: #c9a86c;
+            color: #1a1a1a;
+        }
+
+        .approve-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .reject-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px 20px;
+            border: 2px solid #c9a86c;
+            border-radius: 30px;
+            background: #333;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .search-input::placeholder {
+            color: #aaa;
+        }
+
+        .search-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #c9a86c, #b89650);
+            border: none;
+            border-radius: 30px;
+            color: #1a1a1a;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 10px 20px;
+            border: 2px solid #c9a86c;
+            border-radius: 30px;
+            background: #333;
+            color: white;
+            min-width: 150px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            overflow-y: auto; /* Enables scrolling on modal background */
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+            margin: 30px auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid #c9a86c;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto; /* VERTICAL SCROLLBAR for modal content */
+        }
+
+        /* Custom scrollbar for modal */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #c9a86c;
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #b89650;
+        }
+
+        .close {
+            position: sticky;
+            top: 0;
+            float: right;
+            font-size: 28px;
+            color: #c9a86c;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .close:hover {
+            color: #b89650;
+        }
+
+        .modal h2 {
+            color: #c9a86c;
+            margin-bottom: 20px;
+            font-family: 'Cinzel', serif;
+            padding-right: 30px;
+        }
+
+        .modal textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #c9a86c;
+            border-radius: 10px;
+            background: #333;
+            color: white;
+            font-size: 1rem;
+            margin: 20px 0;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal textarea::placeholder {
+            color: #aaa;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            position: sticky;
+            bottom: 0;
+            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+            padding: 15px 0 0;
+        }
+
+        .modal-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn.confirm {
+            background: #f44336;
+            color: white;
+        }
+
+        .modal-btn.cancel {
+            background: transparent;
+            border: 2px solid #c9a86c;
+            color: #c9a86c;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .booking-detail-row {
+            display: flex;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #c9a86c40;
+        }
+
+        .detail-label {
+            width: 120px;
+            color: #c9a86c;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: white;
+            word-break: break-word;
+        }
+
+        .items-table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+
+        .items-table th {
+            background: #c9a86c;
+            color: #1a1a1a;
+            padding: 10px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .items-table td {
+            padding: 10px;
+            border-bottom: 1px solid #c9a86c40;
+            white-space: nowrap;
+        }
+
+        .items-table td:last-child {
+            white-space: nowrap;
+        }
+
+        /* Export Button */
+        .export-btn {
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid #c9a86c;
+            border-radius: 30px;
+            color: #c9a86c;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .export-btn:hover {
+            background: #c9a86c;
+            color: #1a1a1a;
+        }
+
+        /* Rejection Reason Tooltip */
+        .rejection-reason {
+            font-size: 0.85rem;
+            color: #ff6b6b;
+            margin-top: 5px;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: help;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1400px) {
+            .admin-container {
+                padding: 0 20px;
+            }
+            
+            th, td {
+                padding: 12px 8px;
+                font-size: 0.9rem;
+            }
+            
+            .action-btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1><i class="fas fa-user-shield"></i> ADMIN DASHBOARD</h1>
+            <div class="header-actions">
+                <a href="project.html" class="home-btn">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="stat-value" id="totalBookings">0</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-value" id="totalCustomers">0</div>
+                <div class="stat-label">Total Customers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="stat-value" id="totalItems">0</div>
+                <div class="stat-label">Items Booked</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-rupee-sign"></i></div>
+                <div class="stat-value" id="totalRevenue">0</div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-value" id="pendingBookings">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="switchTab('bookings')">
+                <i class="fas fa-calendar-check"></i> All Bookings
+            </button>
+            <!--<button class="tab-btn" onclick="switchTab('calendar')">
+                <i class="fas fa-calendar-alt"></i> Calendar Bookings
+            </button>
+            <button class="tab-btn" onclick="switchTab('form')">
+                <i class="fas fa-file-alt"></i> Form Submissions
+            </button>
+            <button class="tab-btn" onclick="switchTab('cart')">
+                <i class="fas fa-shopping-cart"></i> Cart Items
+            </button>-->
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="search-bar">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search by name, email, phone, or date...">
+            <button class="search-btn" onclick="searchData()">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>
+
+        <div class="filter-section">
+            <select class="filter-select" id="statusFilter" onchange="filterByStatus()">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+            </select>
+            
+            <select class="filter-select" id="dateFilter" onchange="filterByDate()">
+                <option value="all">All Dates</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="upcoming">Upcoming</option>
+            </select>
+
+            <button class="export-btn" onclick="exportData()">
+                <i class="fas fa-download"></i> Export Data
+            </button>
+        </div>
+
+        <!-- Tab Content - All Bookings -->
+        <div id="bookings-tab" class="tab-content active">
+            <h2 style="color: #c9a86c; margin-bottom: 20px;">All Bookings</h2>
+            <div class="table-container">
+                <table id="bookingsTable">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Customer</th>
+                            <th>Event Date</th>
+                            <th>Event Time</th>
+                            <th>Event Type</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Content - Calendar Bookings -->
+        <div id="calendar-tab" class="tab-content">
+            <h2 style="color: #c9a86c; margin-bottom: 20px;">Calendar Bookings</h2>
+            <div class="table-container">
+                <table id="calendarTable">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Event Date</th>
+                            <th>Event Time</th>
+                            <th>Event Type</th>
+                            <th>Guests</th>
+                            <th>City</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendarTableBody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Content - Form Submissions -->
+        <div id="form-tab" class="tab-content">
+            <h2 style="color: #c9a86c; margin-bottom: 20px;">Form Submissions</h2>
+            <div class="table-container">
+                <table id="formTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>City</th>
+                            <th>Event Type</th>
+                            <th>Event Date</th>
+                            <th>Event Time</th>
+                            <th>Guests</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="formTableBody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Content - Cart Items -->
+        <div id="cart-tab" class="tab-content">
+            <h2 style="color: #c9a86c; margin-bottom: 20px;">Cart Items</h2>
+            <div class="table-container">
+                <table id="cartTable">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th>Event</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartTableBody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 style="color: #c9a86c; margin-bottom: 20px;">Booking Details</h2>
+            <div id="modalContent">
+                <!-- Content will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Rejection Reason Modal -->
+    <div id="rejectionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRejectionModal()">&times;</span>
+            <h2><i class="fas fa-times-circle"></i> Rejection Reason</h2>
+            <textarea id="rejectionReason" placeholder="Please provide reason for rejection..."></textarea>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeRejectionModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="submitRejection()">Submit Rejection</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== ADMIN DASHBOARD JAVASCRIPT ====================
+
+        let allBookings = [];
+        let formSubmissions = [];
+        let cartItems = [];
+        let currentBookingId = null;
+
+        // Load all data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminAccess();
+            loadAllData();
+        });
+
+        function checkAdminAccess() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const role = localStorage.getItem('role');
+            
+            if (!isLoggedIn || role !== 'admin') {
+                alert('Access denied. Admin only.');
+                window.location.href = 'project.html';
+            }
+        }
+
+        function loadAllData() {
+            // Load bookings from eventBookings
+            allBookings = JSON.parse(localStorage.getItem('eventBookings')) || [];
+            if (!Array.isArray(allBookings)) {
+                allBookings = [];
+            }
+
+            // Ensure all bookings have status (default to 'pending')
+            allBookings = allBookings.map(booking => {
+                if (!booking.status) {
+                    booking.status = 'pending';
+                }
+                if (!booking.rejectionReason) {
+                    booking.rejectionReason = '';
+                }
+                return booking;
+            });
+
+            // Load form submissions
+            formSubmissions = JSON.parse(localStorage.getItem('formSubmissions')) || [];
+            if (!Array.isArray(formSubmissions)) {
+                formSubmissions = [];
+            }
+
+            // Load cart items
+            cartItems = JSON.parse(localStorage.getItem('eventCart')) || [];
+            if (!Array.isArray(cartItems)) {
+                cartItems = [];
+            }
+
+            // Save updated bookings with status back to localStorage
+            localStorage.setItem('eventBookings', JSON.stringify(allBookings));
+
+            // Also check for old format calendar bookings
+            const oldBookings = JSON.parse(localStorage.getItem('eventBookings')) || {};
+            if (!Array.isArray(oldBookings) && typeof oldBookings === 'object') {
+                // Convert old format to array
+                Object.keys(oldBookings).forEach(date => {
+                    if (date.includes('-')) {
+                        const slots = oldBookings[date];
+                        const formData = formSubmissions.find(f => f.eventDate === date) || {};
+                        
+                        allBookings.push({
+                            id: 'BK' + Date.now() + Math.random(),
+                            eventDate: date,
+                            eventTime: slots.afternoon ? 'Afternoon Session' : 'Evening Session',
+                            eventType: formData.eventType || 'Event',
+                            name: formData.name || 'Guest',
+                            phone: formData.phone || '',
+                            email: formData.email || '',
+                            city: formData.city || '',
+                            guests: formData.guests || '0',
+                            items: [],
+                            total: 0,
+                            status: 'pending',
+                            rejectionReason: ''
+                        });
+                    }
+                });
+            }
+
+            updateStatistics();
+            displayAllBookings();
+            displayCalendarBookings();
+            displayFormSubmissions();
+            displayCartItems();
+        }
+
+        function updateStatistics() {
+            const totalBookings = allBookings.length;
+            
+            // Unique customers
+            const uniqueCustomers = new Set();
+            allBookings.forEach(b => {
+                if (b.email) uniqueCustomers.add(b.email);
+                if (b.phone) uniqueCustomers.add(b.phone);
+            });
+            
+            const totalItems = allBookings.reduce((sum, b) => sum + (b.items?.length || 0), 0) + cartItems.length;
+            
+            const totalRevenue = allBookings.reduce((sum, b) => sum + (b.total || 0), 0);
+            
+            // Pending bookings
+            const pendingBookings = allBookings.filter(b => b.status === 'pending').length;
+
+            document.getElementById('totalBookings').textContent = totalBookings;
+            document.getElementById('totalCustomers').textContent = uniqueCustomers.size;
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('totalRevenue').textContent = '₹' + totalRevenue;
+            document.getElementById('pendingBookings').textContent = pendingBookings;
+        }
+
+        function displayAllBookings() {
+            const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = '';
+
+            if (allBookings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; white-space: normal;">No bookings found</td></tr>';
+                return;
+            }
+
+            allBookings.forEach(booking => {
+                const row = tbody.insertRow();
+                const itemsCount = booking.items?.length || 0;
+                
+                row.innerHTML = `
+                    <td title="${booking.id || 'N/A'}">${(booking.id || 'N/A').substring(0, 15)}${(booking.id || '').length > 15 ? '...' : ''}</td>
+                    <td title="${booking.name || 'Guest'}">${booking.name || 'Guest'}</td>
+                    <td>${booking.eventDate || 'N/A'}</td>
+                    <td>${booking.eventTime || 'N/A'}</td>
+                    <td>${booking.eventType || 'N/A'}</td>
+                    <td>${itemsCount}</td>
+                    <td>₹${booking.total || 0}</td>
+                    <td>
+                        <span class="status-badge status-${booking.status || 'pending'}">${booking.status || 'pending'}</span>
+                        ${booking.rejectionReason ? `<div class="rejection-reason" title="${booking.rejectionReason}">Reason: ${booking.rejectionReason.substring(0, 15)}...</div>` : ''}
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            <button class="action-btn view-btn" onclick="viewBookingDetails('${booking.id}')" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn approve-btn" onclick="updateBookingStatus('${booking.id}', 'approved')" title="Approve">
+                                <i class="fas fa-check"></i> App
+                            </button>
+                            <button class="action-btn reject-btn" onclick="openRejectionModal('${booking.id}')" title="Reject">
+                                <i class="fas fa-times"></i> Rej
+                            </button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function displayCalendarBookings() {
+            const tbody = document.getElementById('calendarTableBody');
+            tbody.innerHTML = '';
+
+            const calendarBookings = allBookings.filter(b => b.source === 'calendar' || (b.eventDate && !b.items?.length));
+
+            if (calendarBookings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; white-space: normal;">No calendar bookings found</td></tr>';
+                return;
+            }
+
+            calendarBookings.forEach(booking => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td title="${booking.id || 'N/A'}">${(booking.id || 'N/A').substring(0, 15)}${(booking.id || '').length > 15 ? '...' : ''}</td>
+                    <td title="${booking.name || 'Guest'}">${booking.name || 'Guest'}</td>
+                    <td>${booking.phone || 'N/A'}</td>
+                    <td title="${booking.email || 'N/A'}">${(booking.email || 'N/A').substring(0, 15)}${(booking.email || '').length > 15 ? '...' : ''}</td>
+                    <td>${booking.eventDate || 'N/A'}</td>
+                    <td>${booking.eventTime || 'N/A'}</td>
+                    <td>${booking.eventType || 'N/A'}</td>
+                    <td>${booking.guests || '0'}</td>
+                    <td>${booking.city || 'N/A'}</td>
+                    <td>
+                        <span class="status-badge status-${booking.status || 'pending'}">${booking.status || 'pending'}</span>
+                        ${booking.rejectionReason ? `<div class="rejection-reason" title="${booking.rejectionReason}">Reason: ${booking.rejectionReason.substring(0, 15)}...</div>` : ''}
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            <button class="action-btn view-btn" onclick="viewBookingDetails('${booking.id}')" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn approve-btn" onclick="updateBookingStatus('${booking.id}', 'approved')" title="Approve">
+                                <i class="fas fa-check"></i> App
+                            </button>
+                            <button class="action-btn reject-btn" onclick="openRejectionModal('${booking.id}')" title="Reject">
+                                <i class="fas fa-times"></i> Rej
+                            </button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function displayFormSubmissions() {
+            const tbody = document.getElementById('formTableBody');
+            tbody.innerHTML = '';
+
+            if (formSubmissions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; white-space: normal;">No form submissions found</td></tr>';
+                return;
+            }
+
+            formSubmissions.forEach((submission, index) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${submission.name || 'N/A'}</td>
+                    <td>${submission.phone || 'N/A'}</td>
+                    <td title="${submission.email || 'N/A'}">${(submission.email || 'N/A').substring(0, 15)}${(submission.email || '').length > 15 ? '...' : ''}</td>
+                    <td>${submission.city || 'N/A'}</td>
+                    <td>${submission.eventType || 'N/A'}</td>
+                    <td>${submission.eventDate || 'N/A'}</td>
+                    <td>${submission.eventTime || 'N/A'}</td>
+                    <td>${submission.guests || '0'}</td>
+                    <td>
+                        <div class="action-group">
+                            <button class="action-btn view-btn" onclick="viewFormDetails(${index})" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function displayCartItems() {
+            const tbody = document.getElementById('cartTableBody');
+            tbody.innerHTML = '';
+
+            if (cartItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; white-space: normal;">No items in cart</td></tr>';
+                return;
+            }
+
+            cartItems.forEach((item, index) => {
+                const row = tbody.insertRow();
+                const total = item.price * item.quantity;
+                
+                row.innerHTML = `
+                    <td title="${item.name || 'N/A'}">${(item.name || 'N/A').substring(0, 20)}${(item.name || '').length > 20 ? '...' : ''}</td>
+                    <td>${item.category || 'General'}</td>
+                    <td>${item.quantity || 1}</td>
+                    <td>₹${item.price || 0}</td>
+                    <td>₹${total}</td>
+                    <td>${item.event || 'N/A'}</td>
+                    <td>
+                        <div class="action-group">
+                            <button class="action-btn delete-btn" onclick="removeCartItem(${index})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function updateBookingStatus(bookingId, status) {
+            const bookingIndex = allBookings.findIndex(b => b.id === bookingId);
+            if (bookingIndex !== -1) {
+                allBookings[bookingIndex].status = status;
+                if (status === 'approved') {
+                    allBookings[bookingIndex].rejectionReason = '';
+                }
+                localStorage.setItem('eventBookings', JSON.stringify(allBookings));
+                updateStatistics();
+                displayAllBookings();
+                displayCalendarBookings();
+                
+                alert(`Booking ${status} successfully!`);
+            }
+        }
+
+        function openRejectionModal(bookingId) {
+            currentBookingId = bookingId;
+            document.getElementById('rejectionReason').value = '';
+            document.getElementById('rejectionModal').style.display = 'block';
+        }
+
+        function closeRejectionModal() {
+            document.getElementById('rejectionModal').style.display = 'none';
+            currentBookingId = null;
+        }
+
+        function submitRejection() {
+            const reason = document.getElementById('rejectionReason').value.trim();
+            
+            if (!reason) {
+                alert('Please provide a reason for rejection.');
+                return;
+            }
+
+            if (currentBookingId) {
+                const bookingIndex = allBookings.findIndex(b => b.id === currentBookingId);
+                if (bookingIndex !== -1) {
+                    allBookings[bookingIndex].status = 'rejected';
+                    allBookings[bookingIndex].rejectionReason = reason;
+                    localStorage.setItem('eventBookings', JSON.stringify(allBookings));
+                    updateStatistics();
+                    displayAllBookings();
+                    displayCalendarBookings();
+                    
+                    alert('Booking rejected successfully!');
+                    closeRejectionModal();
+                }
+            }
+        }
+
+        function viewBookingDetails(bookingId) {
+            const booking = allBookings.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            const modalContent = document.getElementById('modalContent');
+            const items = booking.items || [];
+            
+            let itemsHtml = '';
+            if (items.length > 0) {
+                itemsHtml = `
+                    <h3 style="color: #c9a86c; margin: 20px 0 10px;">Booked Items</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Category</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${items.map(item => `
+                                    <tr>
+                                        <td>${item.name}</td>
+                                        <td>${item.category || 'General'}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>₹${item.price}</td>
+                                        <td>₹${item.price * item.quantity}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            modalContent.innerHTML = `
+                <div class="booking-detail-row">
+                    <div class="detail-label">Booking ID:</div>
+                    <div class="detail-value">${booking.id || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Name:</div>
+                    <div class="detail-value">${booking.name || 'Guest'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Phone:</div>
+                    <div class="detail-value">${booking.phone || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Email:</div>
+                    <div class="detail-value">${booking.email || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">City:</div>
+                    <div class="detail-value">${booking.city || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Event Date:</div>
+                    <div class="detail-value">${booking.eventDate || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Event Time:</div>
+                    <div class="detail-value">${booking.eventTime || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Event Type:</div>
+                    <div class="detail-value">${booking.eventType || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Guests:</div>
+                    <div class="detail-value">${booking.guests || '0'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Total Amount:</div>
+                    <div class="detail-value">₹${booking.total || 0}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Status:</div>
+                    <div class="detail-value">
+                        <span class="status-badge status-${booking.status || 'pending'}">${booking.status || 'pending'}</span>
+                    </div>
+                </div>
+                ${booking.rejectionReason ? `
+                <div class="booking-detail-row">
+                    <div class="detail-label">Rejection Reason:</div>
+                    <div class="detail-value" style="color: #ff6b6b;">${booking.rejectionReason}</div>
+                </div>
+                ` : ''}
+                ${itemsHtml}
+            `;
+
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function viewFormDetails(index) {
+            const submission = formSubmissions[index];
+            if (!submission) return;
+
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="booking-detail-row">
+                    <div class="detail-label">Name:</div>
+                    <div class="detail-value">${submission.name || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Phone:</div>
+                    <div class="detail-value">${submission.phone || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Email:</div>
+                    <div class="detail-value">${submission.email || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">City:</div>
+                    <div class="detail-value">${submission.city || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Event Type:</div>
+                    <div class="detail-value">${submission.eventType || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Event Date:</div>
+                    <div class="detail-value">${submission.eventDate || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Event Time:</div>
+                    <div class="detail-value">${submission.eventTime || 'N/A'}</div>
+                </div>
+                <div class="booking-detail-row">
+                    <div class="detail-label">Guests:</div>
+                    <div class="detail-value">${submission.guests || '0'}</div>
+                </div>
+            `;
+
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function removeCartItem(index) {
+            if (confirm('Remove this item from cart?')) {
+                cartItems.splice(index, 1);
+                localStorage.setItem('eventCart', JSON.stringify(cartItems));
+                displayCartItems();
+                updateStatistics();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        function searchData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredBookings = allBookings.filter(booking => 
+                (booking.name && booking.name.toLowerCase().includes(searchTerm)) ||
+                (booking.email && booking.email.toLowerCase().includes(searchTerm)) ||
+                (booking.phone && booking.phone.includes(searchTerm)) ||
+                (booking.eventDate && booking.eventDate.includes(searchTerm))
+            );
+            
+            displayFilteredBookings(filteredBookings);
+        }
+
+        function displayFilteredBookings(filteredBookings) {
+            const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = '';
+
+            filteredBookings.forEach(booking => {
+                const row = tbody.insertRow();
+                const itemsCount = booking.items?.length || 0;
+                
+                row.innerHTML = `
+                    <td title="${booking.id || 'N/A'}">${(booking.id || 'N/A').substring(0, 15)}${(booking.id || '').length > 15 ? '...' : ''}</td>
+                    <td title="${booking.name || 'Guest'}">${booking.name || 'Guest'}</td>
+                    <td>${booking.eventDate || 'N/A'}</td>
+                    <td>${booking.eventTime || 'N/A'}</td>
+                    <td>${booking.eventType || 'N/A'}</td>
+                    <td>${itemsCount}</td>
+                    <td>₹${booking.total || 0}</td>
+                    <td>
+                        <span class="status-badge status-${booking.status || 'pending'}">${booking.status || 'pending'}</span>
+                        ${booking.rejectionReason ? `<div class="rejection-reason" title="${booking.rejectionReason}">Reason: ${booking.rejectionReason.substring(0, 15)}...</div>` : ''}
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            <button class="action-btn view-btn" onclick="viewBookingDetails('${booking.id}')" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn approve-btn" onclick="updateBookingStatus('${booking.id}', 'approved')" title="Approve">
+                                <i class="fas fa-check"></i> App
+                            </button>
+                            <button class="action-btn reject-btn" onclick="openRejectionModal('${booking.id}')" title="Reject">
+                                <i class="fas fa-times"></i> Rej
+                            </button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function filterByStatus() {
+            const status = document.getElementById('statusFilter').value;
+            if (status === 'all') {
+                displayAllBookings();
+            } else {
+                const filtered = allBookings.filter(b => b.status === status);
+                displayFilteredBookings(filtered);
+            }
+        }
+
+        function filterByDate() {
+            const filter = document.getElementById('dateFilter').value;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            let filtered = [];
+            
+            switch(filter) {
+                case 'today':
+                    filtered = allBookings.filter(b => {
+                        if (!b.eventDate) return false;
+                        const bookingDate = new Date(b.eventDate);
+                        return bookingDate.toDateString() === today.toDateString();
+                    });
+                    break;
+                case 'week':
+                    const weekLater = new Date(today);
+                    weekLater.setDate(today.getDate() + 7);
+                    filtered = allBookings.filter(b => {
+                        if (!b.eventDate) return false;
+                        const bookingDate = new Date(b.eventDate);
+                        return bookingDate >= today && bookingDate <= weekLater;
+                    });
+                    break;
+                case 'month':
+                    const monthLater = new Date(today);
+                    monthLater.setMonth(today.getMonth() + 1);
+                    filtered = allBookings.filter(b => {
+                        if (!b.eventDate) return false;
+                        const bookingDate = new Date(b.eventDate);
+                        return bookingDate >= today && bookingDate <= monthLater;
+                    });
+                    break;
+                case 'upcoming':
+                    filtered = allBookings.filter(b => {
+                        if (!b.eventDate) return false;
+                        const bookingDate = new Date(b.eventDate);
+                        return bookingDate >= today;
+                    });
+                    break;
+                default:
+                    filtered = allBookings;
+            }
+            
+            displayFilteredBookings(filtered);
+        }
+
+        function exportData() {
+            let csv = '';
+            
+            // Headers
+            csv += 'Booking ID,Name,Email,Phone,Event Date,Event Time,Event Type,Guests,City,Total,Status,Rejection Reason\n';
+            
+            // Data
+            allBookings.forEach(booking => {
+                csv += `"${booking.id || ''}","${booking.name || ''}","${booking.email || ''}","${booking.phone || ''}",`;
+                csv += `"${booking.eventDate || ''}","${booking.eventTime || ''}","${booking.eventType || ''}",`;
+                csv += `"${booking.guests || ''}","${booking.city || ''}","${booking.total || 0}","${booking.status || 'pending'}","${booking.rejectionReason || ''}"\n`;
+            });
+            
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'bookings_export.csv';
+            a.click();
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('role');
+            window.location.href = 'project.html';
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const bookingModal = document.getElementById('bookingModal');
+            const rejectionModal = document.getElementById('rejectionModal');
+            
+            if (event.target == bookingModal) {
+                bookingModal.style.display = 'none';
+            }
+            if (event.target == rejectionModal) {
+                rejectionModal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

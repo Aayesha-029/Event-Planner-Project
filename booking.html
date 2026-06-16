@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Event Planner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: #1a1a1a;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* Header Styles */
+        .booking-header {
+            background: #2a2a2a;
+            padding: 20px 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-bottom: 2px solid #ffd700;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-content h1 {
+            font-family: 'Cinzel', serif;
+            color: #ffd700;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .home-btn {
+            background: #ffd700;
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Main Container */
+        .bookings-container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 30px;
+        }
+
+        .bookings-title {
+            font-family: 'Cinzel', serif;
+            color: #ffd700;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .bookings-title:after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ffd700, transparent);
+            margin: 15px auto 0;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: #2a2a2a;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        /* Booking Cards */
+        .bookings-grid {
+            display: grid;
+            gap: 30px;
+        }
+
+        .booking-card {
+            background: #2a2a2a;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #ffd700;
+        }
+
+        .booking-header-gold {
+            background: #ffd700;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #1a1a1a;
+        }
+
+        .booking-id {
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .booking-status {
+            background: #1a1a1a;
+            color: #ffd700;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .booking-status.status-confirmed {
+            color: #4CAF50;
+        }
+
+        .booking-status.status-cancelled {
+            color: #ff6b6b;
+        }
+
+        .booking-body {
+            padding: 30px;
+            background: #222;
+        }
+
+        .booking-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .detail-section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #ffd70040;
+        }
+
+        .section-title {
+            color: #ffd700;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #ffd70040;
+            padding-bottom: 10px;
+        }
+
+        .event-info-row {
+            display: flex;
+            margin-bottom: 15px;
+            padding: 8px 0;
+            border-bottom: 1px solid #444;
+        }
+
+        .info-label {
+            width: 120px;
+            color: #aaa;
+        }
+
+        .info-value {
+            flex: 1;
+            color: #ffd700;
+            font-weight: 500;
+        }
+
+        /* Cart Items Table */
+        .cart-items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cart-items-table th {
+            text-align: left;
+            padding: 12px 5px;
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+        }
+
+        .cart-items-table td {
+            padding: 10px 5px;
+            border-bottom: 1px solid #444;
+            color: #fff;
+        }
+
+        .cart-items-table tfoot td {
+            padding-top: 15px;
+            font-weight: 600;
+            color: #ffd700;
+        }
+
+        .item-category {
+            background: #ffd70020;
+            color: #ffd700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .booking-footer {
+            padding: 20px 30px;
+            background: #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #ffd700;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        .total-amount span {
+            color: #aaa;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+
+        .add-items-btn {
+            background: #ffd700;
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .confirm-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .bill-review-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffd700;
+            color: #1a1a1a;
+        }
+
+        .cancel-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: #ff6b6b;
+            border: 2px solid #ff6b6b;
+        }
+
+        /* No Bookings */
+        .no-bookings {
+            text-align: center;
+            padding: 60px 20px;
+            background: #2a2a2a;
+            border-radius: 20px;
+            border: 1px solid #ffd700;
+        }
+
+        .no-bookings i {
+            font-size: 5rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .no-bookings h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .no-bookings p {
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        .browse-btn {
+            background: #ffd700;
+            color: #1a1a1a;
+            text-decoration: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* Bill Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .modal-content {
+            background: #2a2a2a;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            border: 2px solid #ffd700;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            color: #ffd700;
+            cursor: pointer;
+        }
+
+        .modal h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #billContent {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        #billContent th {
+            background: #ffd700;
+            color: #1a1a1a;
+            padding: 12px;
+            text-align: left;
+        }
+
+        #billContent td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-btn.print {
+            background: #ffd700;
+            color: #1a1a1a;
+        }
+
+        .modal-btn.close-btn {
+            background: transparent;
+            color: #ffd700;
+            border: 2px solid #ffd700;
+        }
+
+        @media (max-width: 768px) {
+            .booking-details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .booking-footer {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .booking-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="booking-header">
+        <div class="header-content">
+            <h1><i class="fas fa-calendar-check"></i> MY BOOKINGS</h1>
+            <div class="header-actions">
+                <a href="project.html" class="home-btn">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="bookings-container">
+        <h1 class="bookings-title">Your Event Bookings</h1>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="stat-value" id="totalBookings">0</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="stat-value" id="totalItems">0</div>
+                <div class="stat-label">Items Booked</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-rupee-sign"></i></div>
+                <div class="stat-value" id="totalSpent">0</div>
+                <div class="stat-label">Total Spent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-value" id="upcomingEvents">0</div>
+                <div class="stat-label">Upcoming</div>
+            </div>
+        </div>
+
+        <div id="bookingsGrid" class="bookings-grid"></div>
+    </div>
+
+    <div id="billModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBillModal()">&times;</span>
+            <h2><i class="fas fa-file-invoice"></i> BILL REVIEW</h2>
+            <div id="billContent"></div>
+            <div class="modal-actions">
+                <button class="modal-btn print" onclick="printBill()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button class="modal-btn close-btn" onclick="closeBillModal()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let bookings = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBookings();
+        });
+
+        function loadBookings() {
+            bookings = JSON.parse(localStorage.getItem('eventBookings')) || [];
+            if (!Array.isArray(bookings)) bookings = [];
+            updateStats();
+            displayBookings();
+        }
+
+        function updateStats() {
+            document.getElementById('totalBookings').textContent = bookings.length;
+            document.getElementById('totalItems').textContent = bookings.reduce((sum, b) => sum + (b.items?.length || 0), 0);
+            document.getElementById('totalSpent').textContent = '₹' + bookings.reduce((sum, b) => sum + (b.total || 0), 0);
+            
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            document.getElementById('upcomingEvents').textContent = bookings.filter(b => b.eventDate && new Date(b.eventDate) >= today).length;
+        }
+
+        function displayBookings() {
+            const grid = document.getElementById('bookingsGrid');
+            
+            if (bookings.length === 0) {
+                grid.innerHTML = `<div class="no-bookings"><i class="fas fa-calendar-times"></i><h2>No Bookings Found</h2><p>You haven't made any bookings yet.</p><a href="project.html" class="browse-btn">Browse Events</a></div>`;
+                return;
+            }
+
+            let html = '';
+            bookings.forEach(booking => {
+                if (!booking.id) booking.id = 'BK' + Date.now();
+                
+                const hasItems = booking.items && booking.items.length > 0;
+                const itemsTotal = booking.items ? booking.items.reduce((sum, i) => sum + (i.price * i.quantity), 0) : 0;
+                const totalAmount = booking.total || itemsTotal || 0;
+                
+                html += `
+                <div class="booking-card">
+                    <div class="booking-header-gold">
+                        <div class="booking-id"><i class="fas fa-ticket-alt"></i> ID: ${booking.id.substring(0,8)}...</div>
+                        <div class="booking-status ${booking.status === 'confirmed' ? 'status-confirmed' : booking.status === 'cancelled' ? 'status-cancelled' : ''}">
+                            <i class="fas fa-circle"></i> ${booking.status || 'Pending'}
+                        </div>
+                    </div>
+                    <div class="booking-body">
+                        <div class="booking-details-grid">
+                            <div class="detail-section">
+                                <div class="section-title"><i class="fas fa-calendar-alt"></i> Event Details</div>
+                                <div class="event-info-row"><span class="info-label">Date:</span><span class="info-value">${booking.eventDate || 'N/A'}</span></div>
+                                <div class="event-info-row"><span class="info-label">Time:</span><span class="info-value">${booking.eventTime || 'N/A'}</span></div>
+                                <div class="event-info-row"><span class="info-label">Type:</span><span class="info-value">${booking.eventType || 'Event'}</span></div>
+                                <div class="event-info-row"><span class="info-label">Guests:</span><span class="info-value">${booking.guests || '0'}</span></div>
+                            </div>
+                            <div class="detail-section">
+                                <div class="section-title"><i class="fas fa-user"></i> Personal Details</div>
+                                <div class="event-info-row"><span class="info-label">Name:</span><span class="info-value">${booking.name || 'Guest'}</span></div>
+                                <div class="event-info-row"><span class="info-label">Phone:</span><span class="info-value">${booking.phone || 'N/A'}</span></div>
+                                <div class="event-info-row"><span class="info-label">Email:</span><span class="info-value">${booking.email || 'N/A'}</span></div>
+                                <div class="event-info-row"><span class="info-label">City:</span><span class="info-value">${booking.city || 'N/A'}</span></div>
+                            </div>
+                        </div>
+                        ${hasItems ? `
+                        <div class="detail-section">
+                            <div class="section-title"><i class="fas fa-shopping-cart"></i> Booked Items</div>
+                            <table class="cart-items-table">
+                                <thead><tr><th>Item</th><th>Category</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+                                <tbody>
+                                    ${booking.items.map(item => `
+                                    <tr>
+                                        <td>${item.name}</td>
+                                        <td><span class="item-category">${item.category || 'General'}</span></td>
+                                        <td>${item.quantity}</td>
+                                        <td>₹${item.price}</td>
+                                        <td>₹${item.price * item.quantity}</td>
+                                    </tr>`).join('')}
+                                </tbody>
+                                <tfoot><tr><td colspan="4" style="text-align:right;"><strong>Items Total:</strong></td><td><strong>₹${itemsTotal}</strong></td></tr></tfoot>
+                            </table>
+                        </div>` : ''}
+                    </div>
+                    <div class="booking-footer">
+                        <div class="total-amount"><span>Total:</span> ₹${totalAmount}</div>
+                        <div class="booking-actions">
+                            ${!hasItems ? `<a href="event.html" class="add-items-btn"><i class="fas fa-plus-circle"></i> Add Items</a>` : ''}
+                            <button class="confirm-btn" onclick="confirmBooking('${booking.id}')"><i class="fas fa-check-circle"></i> Confirm</button>
+                            <button class="bill-review-btn" onclick="reviewBill('${booking.id}')"><i class="fas fa-file-invoice"></i> Bill Review</button>
+                            <button class="cancel-btn" onclick="cancelBooking('${booking.id}')"><i class="fas fa-times-circle"></i> Cancel</button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function confirmBooking(bookingId) {
+            const index = bookings.findIndex(b => b.id === bookingId);
+            if (index !== -1) {
+                bookings[index].status = 'confirmed';
+                bookings[index].confirmedDate = new Date().toLocaleString();
+                localStorage.setItem('eventBookings', JSON.stringify(bookings));
+                displayBookings();
+                updateStats();
+                alert('✅ Booking confirmed!');
+            }
+        }
+
+        function cancelBooking(bookingId) {
+            if (confirm('Cancel this booking?')) {
+                const index = bookings.findIndex(b => b.id === bookingId);
+                if (index !== -1) {
+                    bookings[index].status = 'cancelled';
+                    bookings[index].cancelledDate = new Date().toLocaleString();
+                    localStorage.setItem('eventBookings', JSON.stringify(bookings));
+                    displayBookings();
+                    updateStats();
+                    alert('❌ Booking cancelled');
+                }
+            }
+        }
+
+        function reviewBill(bookingId) {
+            const booking = bookings.find(b => b.id === bookingId);
+            if (!booking) return alert('Booking not found!');
+
+            const date = new Date().toLocaleDateString();
+            const time = new Date().toLocaleTimeString();
+            const receiptNo = 'RCT-' + Date.now().toString().slice(-8);
+            
+            let itemsHtml = '', subtotal = 0;
+            
+            if (booking.items?.length > 0) {
+                booking.items.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+                    itemsHtml += `<tr><td>${item.name}</td><td style="text-align:center">${item.quantity}</td><td style="text-align:right">₹${item.price}</td><td style="text-align:right">₹${itemTotal}</td></tr>`;
+                });
+            } else {
+                itemsHtml = '<tr><td colspan="4" style="text-align:center">No items</td></tr>';
+            }
+            
+            const tax = Math.round(subtotal * 0.18);
+            const total = subtotal + tax;
+            
+            document.getElementById('billContent').innerHTML = `
+                <div style="text-align:center; border-bottom:2px solid #ffd700; padding-bottom:15px; margin-bottom:20px;">
+                    <h2 style="color:#333;">EVENT PLANNER</h2>
+                    <p style="color:#666;">Premium Event Management</p>
+                    <p style="color:#ffd700; font-weight:bold;">BILL REVIEW</p>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-size:14px;">
+                    <div><strong>Receipt:</strong> ${receiptNo}<br><strong>Date:</strong> ${date} ${time}</div>
+                    <div><strong>Customer:</strong> ${booking.name || 'Guest'}<br><strong>Phone:</strong> ${booking.phone || 'N/A'}</div>
+                </div>
+                <div style="background:#f5f5f5; padding:15px; border-radius:5px; margin-bottom:20px;">
+                    <strong>Event:</strong> ${booking.eventDate || 'N/A'} | ${booking.eventTime || 'N/A'} | ${booking.eventType || 'Event'}
+                    <br><span style="color:${booking.status === 'confirmed' ? '#4CAF50' : '#ffd700'};">Status: ${booking.status || 'PENDING'}</span>
+                </div>
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead><tr style="background:#ffd700;"><th style="padding:10px;">Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+                    <tbody>${itemsHtml}</tbody>
+                </table>
+                <div style="border-top:2px solid #333; margin-top:20px; padding-top:15px; text-align:right;">
+                    <div style="width:300px; margin-left:auto;">
+                        <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span>₹${subtotal}</span></div>
+                        <div style="display:flex; justify-content:space-between;"><span>GST (18%):</span><span>₹${tax}</span></div>
+                        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.2em; border-top:1px solid #ddd; padding-top:8px; margin-top:8px;">
+                            <span>TOTAL:</span><span style="color:#ffd700;">₹${total}</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:30px; text-align:center; color:#999; font-size:12px;">
+                    <p>Thank you for choosing Event Planner!</p>
+                    <p>📍 Lokmanya Nagar, Aasra chowk, Hotgi road, Solapur 413003</p>
+                </div>
+            `;
+            
+            document.getElementById('billModal').style.display = 'block';
+        }
+
+        function closeBillModal() {
+            document.getElementById('billModal').style.display = 'none';
+        }
+
+        function printBill() {
+            const content = document.getElementById('billContent').innerHTML;
+            const win = window.open('', '_blank');
+            win.document.write(`<html><head><title>Bill Review</title><style>body{font-family:Arial;padding:40px;}th{background:#ffd700;padding:12px;}td{padding:10px;border-bottom:1px solid #ddd;}</style></head><body>${content}</body></html>`);
+            win.document.close();
+            win.print();
+        }
+
+        window.addEventListener('click', function(e) {
+            if (e.target === document.getElementById('billModal')) closeBillModal();
+        });
+    </script>
+</body>
+</html>

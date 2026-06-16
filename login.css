@@ -1,0 +1,112 @@
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #2b2b2b, #1c1c1c);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Segoe UI", sans-serif;
+  color: white;
+}
+
+.background {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95));
+  background-image: url('img3.avif');  
+  opacity:0.6;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+
+.login-container {
+  background: #2f2f2f;
+  padding: 40px;
+  width: 350px;
+  border-radius: 14px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  text-align: center;
+}
+
+.login-container h2 {
+  color: #f2cb49;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #aaa;
+}
+
+input ,select {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: 1px solid #e1d63d;
+  background: #484747;
+  color: white;
+}
+.error{
+  color:red;
+  font-size:12px;
+  display:none;
+}
+
+/*
+.phone-field {
+  display: flex;
+  align-items: center;
+  border: 2px solid #d4af37;   
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.country-code {
+  color: white;
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.phone-field input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 16px;
+  width: 100%;
+}
+
+#phoneError {
+  color: red;
+  font-size: 13px;
+}
+*/
+
+.btn-gold {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #d4af37, #b8962e);
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #e6c95c, #c9a63b);
+}
+
+.switch {
+  margin-top: 15px;
+  font-size: 13px;
+}
+
+.switch a {
+  color: #d4af37;
+  text-decoration: none;
+}

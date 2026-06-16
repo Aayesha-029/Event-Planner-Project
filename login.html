@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Event Planner</title>
+  <link rel="stylesheet" href="login.css">
+  
+</head>
+<body>
+<div class="background"></div>
+<div class="login-container">
+  <h2>Event Planner</h2>
+  <p class="subtitle">Login to continue</p>
+    <!----pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"--->
+  <form id="loginForm" autocomplete="off">
+    <input type="email" id="email" placeholder="Email" autocomplete="off"  required>
+    <small id="emailError" style="color:red; display:none;"></small>
+    
+    <input type="password" id="password" placeholder="Password" autocomplete="new-password" required>
+    <small id="passwordError" class="error"></small>
+
+<!-----
+    <input type="tel" id="phone" placeholder=" +91  Phone no." maxlength="10" pattern="[0-9]{10}" autocomplete="off" required>
+      --->
+      <input type="tel" id="phone" placeholder=" +91  10-digits only " maxlenght="10">
+
+      <small id="phoneError" class="error"></small>
+    <select id="role" required>
+      <option value="">Select Role</option>
+      <option value="user">User Sign-in</option>
+      <option value="admin">Admin Sign-in</option>
+      
+    </select>
+    <small id="roleError" class="error"></small>
+
+    <button type="submit" class="btn-gold">Sign-in</button>
+  </form>
+
+  <p class="switch">
+    Don't have an account? <a href="signup.html"> Sign-up </a>
+  </p>
+</div>
+<script  src="login.js"></script>
+</body>
+</html>

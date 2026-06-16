@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Planner - Availability</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Your original styles - keep exactly as they were */
+        .modal {
+            display: flex;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95));
+            background-image: url('img3.avif');
+            background-size: cover;
+            background-position: center;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+        .modal-content {
+            background-color: rgba(47, 46, 46, 0.76);
+            padding: 20px;
+            border-radius: 8px;
+            width: 95%;
+            max-width: 800px;
+            text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .heading{
+            color:#bda831;
+        }
+        .close {
+            float: right;
+            font-size: 30px;
+            cursor: pointer;
+            color:white;
+        }
+        .calendar {
+            background-color: rgba(214, 209, 209, 0.648);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .day {
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background-color: transparent;
+            color: white;
+        }
+        .day.available {
+            /* No special styling - just plain text */
+            color: rgb(12, 12, 12);
+            background-color: transparent;
+            border: none;
+        }
+        .day.partial {
+            background-color: #bda831;
+            color: black;
+            font-weight: bold;
+            border-radius: 50%;
+            border: 2px solid #bda831;
+        }
+        .day.booked {
+            background-color: #dc3545;
+            color: white;
+            font-weight: bold;
+            border-radius: 50%;
+            border: 2px solid #dc3545;
+        }
+        .day.disabled {
+            color: #4e4b4b;
+            cursor: not-allowed;
+            background-color: transparent;
+        }
+        .day.selected {
+            background-color: #2d2e2e;
+            color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+        .time-slots {
+            margin-top: 20px;
+            display: none;
+            color: rgba(207, 174, 65, 0.959);
+        }
+        .time-slots label {
+            display: block;
+            margin: 10px 0;
+            color: whitesmoke;
+        }
+        .time-slots input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .booking-form {
+            margin-top: 20px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .booking-form input, .booking-form select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #928733f3;
+            border-radius: 9px;
+            color: white;
+            background-color: rgb(38, 37, 37);
+        }
+        .error {
+            color: red;
+            font-size: 15px;
+            display: none;
+        }
+        .book-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #bda831;
+            color: rgb(17, 16, 16);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .book-btn:hover{
+            padding:12px 21px;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgb(76, 74, 74);
+            color: aliceblue;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(61, 59, 59, 0.3);
+        }
+        .slot-info {
+            margin-top: 10px;
+            color: #bda831;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="availability-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="window.location.href='project.html'">&times;</span>
+            <h1 class="heading"><i class="fas fa-calendar-alt"></i> Select Event Date and Time</h1>
+            <div class="calendar" id="calendar">
+                <div class="calendar-header">
+                    <button id="prev-month">&lt;</button>
+                    <h3 id="month-year"></h3>
+                    <button id="next-month">&gt;</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Days will be populated by JS -->
+                </div>
+            </div>
+            <div class="time-slots" id="time-slots">
+                <h3>Select Time Slot</h3>
+                <label>
+                    <input type="radio" name="time-slot" value="afternoon" id="afternoon"> Afternoon Session
+                </label>
+                <label>
+                    <input type="radio" name="time-slot" value="evening" id="evening"> Evening Session
+                </label>
+            </div>
+            <form class="booking-form" id="booking-form">
+                <input type="text" id="name" placeholder="Name" required>
+                <input type="text" id="phone" placeholder="Phone (10 digits only)" required>
+                <div class="error" id="phone-error">Phone must be exactly 10 digits.</div>
+                <input type="email" id="email" placeholder="Email" required>
+                <div class="error" id="email-error">Email must end with '@gmail.com'.</div>
+                <input type="text" id="city" placeholder="City" required>
+                <select id="event-type" required>
+                    <option value="">Select Event Type</option>
+                    <option value="Mehendi">Mehendi</option>
+                    <option value="Haldi">Haldi</option>
+                    <option value="Wedding">Wedding</option>
+                    <option value="Reception">Reception</option>
+                    <option value="Corporate">Corporate</option>
+                    <option value="Birthday">Birthday</option>
+                    <option value="Anniversary">Anniversary</option>
+                    <option value="Baby Shower">Baby Shower</option>
+                </select>
+                <input type="text" id="event-date" placeholder="Event Date" readonly>
+                <input type="text" id="event-time" placeholder="Event Time Slot" readonly>
+                <input type="text" id="guests" placeholder="Number of Guests" required>
+                <button type="submit" class="book-btn" id="book-btn">Book Event</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="popup" class="popup">
+        <p>This date is not available. Try to book another date.</p>
+        <button onclick="closePopup()">OK</button>
+    </div>
+
+    <div id="success-popup" class="popup">
+        <p id="success-message"></p>
+        <button onclick="goToBookings()" id="okbtn">OK</button>
+    </div>
+
+    <script>
+        // Elements
+        const popup = document.getElementById('popup');
+        const successPopup = document.getElementById('success-popup');
+        const timeSlots = document.getElementById('time-slots');
+        const bookingForm = document.getElementById('booking-form');
+        const phoneInput = document.getElementById('phone');
+        const emailInput = document.getElementById('email');
+        const phoneError = document.getElementById('phone-error');
+        const emailError = document.getElementById('email-error');
+        const eventDateInput = document.getElementById('event-date');
+        const eventTimeInput = document.getElementById('event-time');
+
+        // Calendar Elements
+        const monthYear = document.getElementById('month-year');
+        const calendarGrid = document.getElementById('calendar-grid');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+
+        // State
+        let currentDate = new Date();
+        let selectedDate = null;
+        let selectedTime = null;
+        
+        // Load bookings from eventBookings array
+        let allBookings = JSON.parse(localStorage.getItem('eventBookings')) || [];
+        
+        // Create detailed booking status object
+        let bookingStatus = {};
+        
+        // Build booking status from all bookings
+        function buildBookingStatus() {
+            bookingStatus = {};
+            
+            if (Array.isArray(allBookings)) {
+                allBookings.forEach(booking => {
+                    if (booking && booking.eventDate) {
+                        const date = booking.eventDate;
+                        
+                        if (!bookingStatus[date]) {
+                            bookingStatus[date] = { 
+                                afternoon: false, 
+                                evening: false,
+                                bookings: [] 
+                            };
+                        }
+                        
+                        // Mark which time slots are booked
+                        if (booking.eventTime) {
+                            if (booking.eventTime.includes('Afternoon')) {
+                                bookingStatus[date].afternoon = true;
+                            } else if (booking.eventTime.includes('Evening')) {
+                                bookingStatus[date].evening = true;
+                            }
+                        }
+                        
+                        // Store booking reference
+                        bookingStatus[date].bookings.push(booking);
+                    }
+                });
+            }
+            
+            console.log('Booking Status:', bookingStatus); // For debugging
+        }
+        
+        // Initialize booking status
+        buildBookingStatus();
+
+        // Close Popups
+        function closePopup() {
+            popup.style.display = 'none';
+        }
+        
+        function goToBookings() {
+            successPopup.style.display = 'none';
+            window.location.href = "booking.html";
+        }
+
+        // Render Calendar
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            monthYear.textContent = `${currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
+
+            calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const header = document.createElement('div');
+                header.textContent = day;
+                header.style.fontWeight = 'large';
+                header.style.color = '';
+                calendarGrid.appendChild(header);
+            });
+
+            // Get first day of month and days in month
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                calendarGrid.appendChild(empty);
+            }
+
+            // Add days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.classList.add('day');
+                dayElement.textContent = day;
+                
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dateObj = new Date(year, month, day);
+
+                if (dateObj < today) {
+                    // Past dates - disabled
+                    dayElement.classList.add('disabled');
+                } else {
+                    // Check booking status for this date
+                    const status = bookingStatus[dateKey] || { afternoon: false, evening: false };
+                    
+                    if (status.afternoon && status.evening) {
+                        // Both slots booked - RED CIRCLE
+                        dayElement.classList.add('booked');
+                    } else if (status.afternoon || status.evening) {
+                        // One slot booked - GOLDEN CIRCLE
+                        dayElement.classList.add('partial');
+                    } else {
+                        // No bookings - NO CONTAINER (just plain text)
+                        dayElement.classList.add('available');
+                    }
+
+                    // Add click handler
+                    dayElement.onclick = () => {
+                        if (status.afternoon && status.evening) {
+                            // Fully booked
+                            popup.style.display = 'block';
+                            return;
+                        }
+                        
+                        // Remove selected class from all days
+                        document.querySelectorAll('.day.selected').forEach(d => {
+                            d.classList.remove('selected');
+                        });
+                        
+                        // Add selected class to clicked day
+                        dayElement.classList.add('selected');
+                        selectedDate = dateKey;
+                        
+                        // Show time slots with availability
+                        showTimeSlots(status);
+                    };
+                }
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        // Show Time Slots with availability
+        function showTimeSlots(status) {
+            timeSlots.style.display = 'block';
+            bookingForm.style.display = 'none';
+            
+            // Enable/disable slots based on what's already booked
+            document.getElementById('afternoon').disabled = status.afternoon;
+            document.getElementById('evening').disabled = status.evening;
+            
+            // Add slot info text
+            let slotInfo = document.querySelector('.slot-info');
+            if (!slotInfo) {
+                slotInfo = document.createElement('div');
+                slotInfo.className = 'slot-info';
+                timeSlots.appendChild(slotInfo);
+            }
+            
+            if (status.afternoon && !status.evening) {
+                slotInfo.innerHTML = '⚠️ Afternoon slot is booked. Only Evening slot available.';
+            } else if (!status.afternoon && status.evening) {
+                slotInfo.innerHTML = '⚠️ Evening slot is booked. Only Afternoon slot available.';
+            } else {
+                slotInfo.innerHTML = '✓ Both slots available';
+            }
+            
+            // Reset radio buttons
+            document.getElementById('afternoon').checked = false;
+            document.getElementById('evening').checked = false;
+
+            // Add change handlers for time slots
+            document.getElementById('afternoon').onchange = () => {
+                selectedTime = 'afternoon';
+                bookingForm.style.display = 'block';
+                eventDateInput.value = selectedDate;
+                eventTimeInput.value = 'Afternoon Session';
+            };
+            
+            document.getElementById('evening').onchange = () => {
+                selectedTime = 'evening';
+                bookingForm.style.display = 'block';
+                eventDateInput.value = selectedDate;
+                eventTimeInput.value = 'Evening Session';
+            };
+        }
+
+        // Form Validations
+        phoneInput.oninput = () => {
+            const value = phoneInput.value;
+            if (!/^\d{10}$/.test(value)) {
+                phoneError.style.display = 'block';
+            } else {
+                phoneError.style.display = 'none';
+            }
+        };
+        
+        emailInput.oninput = () => {
+            const value = emailInput.value;
+            if (!value.endsWith('@gmail.com')) {
+                emailError.style.display = 'block';
+            } else {
+                emailError.style.display = 'none';
+            }
+        };
+
+        // Form Submission - Save each booking separately
+bookingForm.onsubmit = (e) => {
+    e.preventDefault();
+    
+    if (phoneError.style.display === 'block' || emailError.style.display === 'block') {
+        alert('Please fix the errors before submitting.');
+        return;
+    }
+
+    // Create unique ID that includes time slot for proper identification
+    const timeSlotCode = eventTimeInput.value === 'Afternoon Session' ? 'AF' : 'EV';
+    const uniqueId = 'BK' + Date.now() + timeSlotCode + Math.random().toString(36).substr(2, 4).toUpperCase();
+
+    // Create booking object for THIS specific booking
+    const booking = {
+        id: uniqueId,
+        eventDate: selectedDate,
+        eventTime: eventTimeInput.value,
+        eventType: document.getElementById('event-type').value,
+        name: document.getElementById('name').value,
+        phone: phoneInput.value,
+        email: emailInput.value,
+        city: document.getElementById('city').value,
+        guests: document.getElementById('guests').value,
+        items: [],
+        total: 0,
+        status: 'pending',
+        bookingDate: new Date().toLocaleDateString(),
+        source: 'calendar',
+        timeSlot: selectedTime // Add explicit time slot field
+    };
+
+    // Get existing bookings array
+    let allBookings = JSON.parse(localStorage.getItem('eventBookings')) || [];
+    if (!Array.isArray(allBookings)) {
+        allBookings = [];
+    }
+    
+    // Add this NEW booking to the array (keep ALL bookings)
+    allBookings.push(booking);
+    
+    // Save to localStorage
+    localStorage.setItem('eventBookings', JSON.stringify(allBookings));
+    
+    // Update booking status for calendar
+    buildBookingStatus();
+
+    // Save selected date and time for cart reference
+    localStorage.setItem('selectedEventDate', selectedDate);
+    localStorage.setItem('selectedEventTime', eventTimeInput.value);
+    localStorage.setItem('lastBookingId', uniqueId); // Also save last booking ID
+
+    // Show success popup
+    document.getElementById('success-message').textContent = 
+        `Your Event is Successfully booked for ${selectedDate} (${eventTimeInput.value}).`;
+    
+    successPopup.style.display = 'block';
+
+    // Reset and update calendar
+    resetSelection();
+    renderCalendar();
+};
+
+        // Reset Selection
+        function resetSelection() {
+            selectedDate = null;
+            selectedTime = null;
+            timeSlots.style.display = 'none';
+            bookingForm.style.display = 'none';
+            
+            document.querySelectorAll('.day.selected').forEach(d => {
+                d.classList.remove('selected');
+            });
+            
+            bookingForm.reset();
+            phoneError.style.display = 'none';
+            emailError.style.display = 'none';
+        }
+
+        // Navigate Months
+        prevMonthBtn.onclick = () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        };
+        
+        nextMonthBtn.onclick = () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        };
+
+        // Listen for storage changes (when bookings added from other pages)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'eventBookings') {
+                allBookings = JSON.parse(e.newValue) || [];
+                buildBookingStatus();
+                renderCalendar();
+            }
+        });
+
+        // Initial Render
+        renderCalendar();
+    </script>
+</body>
+</html>

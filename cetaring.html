@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Planner - Catering Module</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- For icons -->
+    <link rel="stylesheet" href="cetaring.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="site-header">
+        <div class="header-content">
+            <h1 class="head">EVENT PLANNER</h1>
+            <div class="header-action">
+               <!-- <button id="calendar-btn" class="icon-btn-cal"><i class="fas fa-calendar-alt"></i></button>-->
+               <!--- <a href="booking.html"><button id="bookings-btn" class="bookings-btn"><i class="fa-solid fa-calendar-check"></i> My Bookings</button></a>-->
+            </div>
+        </div>
+    </header>
+
+    <div class="catering-container">
+        <div class="header">
+            <h1 class="heading">Catering for Your Event</h1>
+        </div>
+
+        <!-- Cart Modal (backup, but primary action now redirects) -->
+        <div class="cart-modal" id="cart-modal">
+            <div class="cart-content">
+                <span class="close-cart" onclick="closeCart()">&times;</span>
+                <h2>Your Cart</h2>
+                <div id="cart-items"></div>
+                <div class="cart-total" id="cart-total">Total: ₹0</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <!-- First Filter: Events -->
+            <div class="filter-bar">
+                <div class="filter-tab" id="wedding-tab"><i class="fas fa-ring"></i> Wedding <span class="selected-sub" id="wedding-sub"></span>
+                    <div class="dropdown">
+                        <div class="dropdown-item" onclick="selectEvent('Wedding', 'Mahendi')"><i class="fas fa-paint-brush"></i> Mahendi</div>
+                        <div class="dropdown-item" onclick="selectEvent('Wedding', 'Haldi')"><i class="fas fa-sun"></i> Haldi</div>
+                        <div class="dropdown-item" onclick="selectEvent('Wedding', 'Wedding')"><i class="fas fa-heart"></i> Wedding</div>
+                        <div class="dropdown-item" onclick="selectEvent('Wedding', 'Reception')"><i class="fas fa-glass-cheers"></i> Reception</div>
+                    </div>
+                </div>
+                <div class="filter-tab" id="corporate-tab" onclick="selectEvent('Corporate', '')"><i class="fas fa-briefcase"></i> Corporate</div>
+                <div class="filter-tab" id="parties-tab"><i class="fas fa-birthday-cake"></i> Parties <span class="selected-sub" id="parties-sub"></span>
+                    <div class="dropdown">
+                        <div class="dropdown-item" onclick="selectEvent('Parties', 'Birthday')"><i class="fas fa-birthday-cake"></i> Birthday</div>
+                        <div class="dropdown-item" onclick="selectEvent('Parties', 'Anniversaries')"><i class="fas fa-calendar-alt"></i> Anniversaries</div>
+                        <div class="dropdown-item" onclick="selectEvent('Parties', 'Baby Shower')"><i class="fas fa-baby"></i> Baby Shower</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Filter: Veg/Non-Veg (appears after selecting event) -->
+            <div class="filter-bar" id="veg-nonveg-filter" style="display: none;">
+                <div class="filter-tab" id="veg-tab" onclick="selectVegNonVeg('Veg')"><i class="fas fa-leaf"></i> Veg</div>
+                <div class="filter-tab" id="nonveg-tab" onclick="selectVegNonVeg('Non-Veg')"><i class="fas fa-drumstick-bite"></i> Non-Veg</div>
+            </div>
+
+            <!-- Third Filter: Starter/Main/Desserts (appears after selecting Veg/Non-Veg) -->
+            <div class="filter-bar" id="course-filter" style="display: none;">
+                <div class="filter-tab" id="starter-tab" onclick="selectCourse('Starter')"><i class="fas fa-utensils"></i> Starter</div>
+                <div class="filter-tab" id="main-tab" onclick="selectCourse('Main Meal')"><i class="fas fa-concierge-bell"></i> Main Meal</div>
+                <div class="filter-tab" id="desserts-tab" onclick="selectCourse('Desserts')"><i class="fas fa-ice-cream"></i> Desserts</div>
+            </div>
+        </div>
+
+        <!-- Food Gallery -->
+        <div class="food-gallery" id="food-gallery">
+            <!-- Food items will be populated here based on filters -->
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <div class="tabs">
+                <a href="project.html"> <button class="tab" data-tab="home"><i class="fa-solid fa-house"></i> Home</button></a>
+                <a href="event.html"><button class="tab" data-tab="event"><i class="fa-solid fa-champagne-glasses"></i> Event</button></a>
+                <a href="service.html"><button class="tab" data-tab="service"><i class="fa-solid fa-bell-concierge"></i> Service</button></a>
+                <a href="cetaring.html"><button class="tab active" data-tab="catering"><i class="fa-solid fa-utensils"></i> Catering</button></a>
+                <a href="decoration.html"><button class="tab" data-tab="decoration"><i class="fa-sharp fa-solid fa-wand-magic-sparkles"></i> Decoration</button></a>
+                <a href="contact.html"><button class="tab" data-tab="contact us"><i class="fas fa-phone-alt"></i> Contat-us </button></a>         
+            </div>
+        </div>
+    </footer>
+
+    <script src="cetaring.js"></script>
+    <!-- TEST BUTTON - Remove after testing -->
+
+
+</body>
+</html>
